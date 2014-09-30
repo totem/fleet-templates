@@ -11,10 +11,10 @@ EnvironmentFile=/etc/environment
 Restart=always
 RestartSec=20s
 TimeoutStartSec=20m
-ExecStartPre=/usr/bin/docker pull {{ image }}
+ExecStartPre=/usr/bin/docker pull {{ use_image }}
 ExecStartPre=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker rm -f {{ container_name }} || true"
 ExecStart=/bin/sh -xc "/usr/bin/docker run -h {{ container_name }} {{ docker_args| default('') }} -P  --rm  {{ docker_env| default('') }} \
-          --name {{ container_name }} {{ image }} discover.yoda_register --proxy-host=ec2:meta-data:public-hostname {{ name }} {{ version }} {{ name }}-{{ version }}-%i
+          --name {{ container_name }} {{ use_image }} discover.yoda_register --proxy-host=ec2:meta-data:public-hostname {{ name }} {{ version }} {{ name }}-{{ version }}-%i
 ExecStop=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker rm -f {{ container_name }} || true"
 
 [X-Fleet]
