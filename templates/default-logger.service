@@ -1,5 +1,6 @@
 {% set use_version = version or '1.0' %}
 {% set container_name = name+'-'+use_version+'-%i' %}
+
 [Unit]
 Description={{ name }}-{{ version }}@%i Logger
 BindsTo={{ name }}-{{ version }}@%i.service
@@ -8,7 +9,10 @@ BindsTo={{ name }}-{{ version }}@%i.service
 Restart=always
 RestartSec=20s
 ExecStartPre=/bin/sh -c "until docker inspect {{ container_name }} >/dev/null 2>&1; do sleep 1; done"
-ExecStart=/bin/sh -c "docker logs --tail=100 -f  {{ container_name }} 2>&1 | logger -p local0.info -t '{{ container_name }}' --udp --server $(etcdctl get /totem/logs/host | cut -d ':' -f1) --port $(etcdctl get /totem/logs/port | cut -d ':' -f2)"
+ExecStart=/bin/sh -c "docker logs --tail=100 -f  {{ container_name }} 2>&1 | \
+          logger -p local0.info -t '{{ container_name }}' --udp \
+          --server $(etcdctl get {{ logs_host_key | default('/totem/logs/host') }}) \
+          --port $(etcdctl get {{ logs_port_key | default('/totem/logs/port') }} )"
 
 
 [X-Fleet]
