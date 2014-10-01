@@ -1,21 +1,29 @@
-{% set use_version = version or '1.0' %}
-{% set use_image = image or 'totem/totem-base:trusty' %}
-{% set container_name = name+'-'+use_version+'-%i' %}
+{%- set version = version or '1.0' %}
+{%- set service = service or {} -%}
+{%- set image = image or 'totem/totem-base:trusty' -%}
+{%- set container_name = container_name or name+'-'+version+'-%i'-%}
 
+{% block unit %}
 [Unit]
 Description={{ name }}-{{ version }}@%i Application
+{%- endblock -%}
 
+{% block service %}
 [Service]
-Restart=always
-RestartSec=20s
-TimeoutStartSec=20m
-ExecStartPre=/usr/bin/docker pull {{ use_image }}
+Restart={{ service['restart'] | default('always') }}
+RestartSec={{ service['restart-sec'] | default('20s') }}
+TimeoutStartSec={{ service['timeout-start-sec'] | default('20m') }}
+ExecStartPre=/usr/bin/docker pull {{ image }}
 ExecStartPre=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker rm -f {{ container_name }} || true"
-ExecStart=/bin/sh -xc "/usr/bin/docker run -h {{ container_name }} {{ docker_args| default('') }} -P  --rm  {{ docker_env| default('') }} \
-          -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ use_version }} \
+ExecStart=/bin/sh -xc "/usr/bin/docker run -h {{ container_name }} {{ docker_args }} -P  --rm  \
+          {% for env in environment %} -e {{ env.name }}='{{ env.value }}'{% endfor %} \
+          -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
           -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
-          --name {{ container_name }} {{ use_image }} {{ docker_cmd }}"
+          --name {{ container_name }} {{ image }} {{ command }}"
 ExecStop=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker rm -f {{ container_name }} || true"
+{%- endblock -%}
 
+{% block xfleet %}
 [X-Fleet]
 Conflicts={{ name }}-{{ version }}@*.service
+{%- endblock -%}

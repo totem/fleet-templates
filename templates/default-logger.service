@@ -1,6 +1,5 @@
-{% set use_version = version or '1.0' %}
-{% set container_name = name+'-'+use_version+'-%i' %}
-
+{%- set use_version = version or '1.0' %}
+{% set container_name = name+'-'+use_version+'-%i' -%}
 [Unit]
 Description={{ name }}-{{ version }}@%i Logger
 BindsTo={{ name }}-{{ version }}@%i.service
