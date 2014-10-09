@@ -2,6 +2,7 @@
 {%- set image = image or 'totem/yoda-discover' -%}
 {%- set container_name = name+'-'+service_type+'-'+version+'-%i' -%}
 {%- set command = command or 'discover.yoda_register --proxy-host=ec2:meta-data:public-hostname '+ name + ' '+version + ' ' + name+ '-' +version+'-%i' -%}
+{%- set environment = environment or {} -%}
 {%- extends "default-app.service" -%}
 
 {% block unit %}
