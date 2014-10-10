@@ -1,8 +1,8 @@
 {%- set use_version = version or '1.0' %}
-{% set container_name = name+'-'+use_version+'-%i' -%}
+{% set container_name = name+'-'+use_version+'-app-%i' -%}
 [Unit]
 Description={{ name }}-{{ version }}@%i Logger
-BindsTo={{ name }}-{{ version }}@%i.service
+BindsTo={{ name }}-{{ version }}-app@%i.service
 
 [Service]
 Restart=always
@@ -15,4 +15,4 @@ ExecStart=/bin/sh -c "docker logs --tail=100 -f  {{ container_name }} 2>&1 | \
 
 
 [X-Fleet]
-MachineOf={{ name }}-{{ version }}@%i.service
+MachineOf={{ name }}-{{ version }}-app@%i.service
