@@ -18,7 +18,7 @@ TimeoutStartSec={{ service['timeout-start-sec'] | default('20m') }}
 ExecStartPre=/usr/bin/docker pull {{ image }}
 ExecStartPre=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker rm -f {{ container_name }} || true"
 ExecStart=/bin/sh -xc "/usr/bin/docker run -h {{ hostname }} {{ docker_args }} -P  --rm  \
-          {% for env_name, env_value in environment.iteritems() %} -e {{ env_name }}='{{ env_value }}'{% endfor %} \
+          {% for env_name, env_value in environment.iteritems() %} -e {{ env_name }}='{{ env_value | replace('"', '\\"' }}'{% endfor %} \
           -e HOST_IP=$(hostname -i) \
           -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
           -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
