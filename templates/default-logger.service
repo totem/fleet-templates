@@ -9,7 +9,7 @@ Restart=always
 RestartSec=20s
 ExecStartPre=/bin/sh -c "until docker inspect {{ container_name }} >/dev/null 2>&1; do sleep 10s; done"
 ExecStart=/bin/sh -c "docker logs --tail=100 -f  {{ container_name }} 2>&1 | \
-          logger -p local0.info -t \"$(hostname){{ container_name }}\" --tcp \
+          logger -p local0.info -t \"$(hostname) {{ container_name }}\" --tcp \
           --server $(etcdctl get {{ logs_server | default('/totem/logs/host') }}) \
           --port $(etcdctl get {{ logs_port_key | default('/totem/logs/port') }} )"
 
