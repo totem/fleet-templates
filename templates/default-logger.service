@@ -3,6 +3,7 @@
 [Unit]
 Description={{ name }}-{{ version }}@%i Logger
 BindsTo={{ name }}-{{ version }}-app@%i.service
+After={{ name }}-{{ version }}-app@%i.service
 
 [Service]
 Restart=always
