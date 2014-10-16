@@ -1,5 +1,6 @@
 {%- set use_version = version or '1.0' %}
 {% set container_name = name+'-'+use_version+'-app-%i' -%}
+{%- set service = service or {} -%}
 [Unit]
 Description={{ name }}-{{ version }}@%i Logger
 BindsTo={{ name }}-{{ version }}-app@%i.service
@@ -7,6 +8,7 @@ BindsTo={{ name }}-{{ version }}-app@%i.service
 [Service]
 Restart=always
 RestartSec=20s
+TimeoutStartSec={{ service['timeout-start-sec'] | default('20m') }}
 ExecStartPre=/bin/sh -c "until docker inspect {{ container_name }} >/dev/null 2>&1; do sleep 10s; done"
 ExecStart=/bin/sh -c "docker logs --tail=100 -f  {{ container_name }} 2>&1 | \
           logger -p local0.info -t \"$(hostname) {{ container_name }}\" --tcp \
