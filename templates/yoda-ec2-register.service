@@ -9,6 +9,7 @@
 [Unit]
 Description=Register application with yoda proxy
 BindsTo={{ name }}-{{ version }}-app@%i.service
+PartOf={{ name }}-{{ version }}-app@%i.service
 {%- endblock -%}
 
 {% block xfleet %}

@@ -4,6 +4,7 @@
 [Unit]
 Description={{ name }}-{{ version }}@%i Logger
 BindsTo={{ name }}-{{ version }}-app@%i.service
+PartOf={{ name }}-{{ version }}-app@%i.service
 
 [Service]
 Restart=always
