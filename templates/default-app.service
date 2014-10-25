@@ -9,7 +9,7 @@
 {% block unit %}
 [Unit]
 Description={{ name }}-{{ version }}-app@%i Application
-Wants={% ','.join(wants) %}
+Wants={{ ','.join(wants) }}
 {%- endblock -%}
 
 {% block service %}
