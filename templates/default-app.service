@@ -4,12 +4,12 @@
 {%- set container_name = container_name or name+'-'+version+'-app-%i'-%}
 {%- set hostname = hostname or container_name -%}
 {%- set environment = environment or {} -%}
-{%- set wants = wants or () -%}
+{%- set sidekicks = sidekicks or () -%}
 
 {% block unit %}
 [Unit]
 Description={{ name }}-{{ version }}-app@%i Application
-Wants={{ ','.join(wants) }}
+Wants={%- for sidekick in sidekicks -%}{{name+'-'+version+'-'+sidekick+'@%i.service'}},{%- endfor %-}
 {%- endblock -%}
 
 {% block service %}
