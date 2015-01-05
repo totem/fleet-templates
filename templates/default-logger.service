@@ -4,8 +4,8 @@
 [Unit]
 Description={{ name }}-{{ version }}@%i Logger
 BindsTo={{ name }}-{{ version }}-app@%i.service
-PartOf={{ name }}-{{ version }}-app@%i.service
-After={{ name }}-{{ version }}-app@%i.service
+# PartOf={{ name }}-{{ version }}-app@%i.service
+# After={{ name }}-{{ version }}-app@%i.service
 ReloadPropagatedFrom={{ name }}-{{ version }}-app@%i.service
 
 [Service]

@@ -9,9 +9,9 @@
 [Unit]
 Description=Register yoda proxy node with route53
 BindsTo={{ name }}-{{ version }}-app@%i.service
-PartOf={{ name }}-{{ version }}-app@%i.service
+# PartOf={{ name }}-{{ version }}-app@%i.service
 ReloadPropagatedFrom={{ name }}-{{ version }}-app@%i.service
-After={{ name }}-{{ version }}-app@%i.service
+# After={{ name }}-{{ version }}-app@%i.service
 {%- endblock -%}
 
 {% block xfleet %}
