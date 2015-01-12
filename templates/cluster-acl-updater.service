@@ -1,7 +1,9 @@
 {%- set service = service or {} -%}
+{%- set version = version or '1.0' %}
+{%- set name = name or 'cluster-acl-updater' %}
 
 [Unit]
-Description=cluster-acl-update@%i
+Description={{name}}-{{version}}-app@%i
 Requires=docker.service
 
 [Service]
@@ -14,4 +16,4 @@ ExecStart=/bin/sh -c "while true; \
           sleep {{ service['poll-interval'] | default('60s') }}; done "
 
 [X-Fleet]
-Conflicts=cluster-acl-update@%i.service
+Conflicts={{name}}-{{version}}-app@%i.service
