@@ -1,0 +1,17 @@
+{%- set service = service or {} -%}
+
+[Unit]
+Description=cluster-acl-update@%i
+Requires=docker.service
+
+[Service]
+Restart={{ service['restart'] | default('always') }}
+RestartSec={{ service['restart-sec'] | default('20s') }}
+TimeoutStartSec={{ service['timeout-start-sec'] | default('20m') }}
+TimeoutStopSec={{ service['timeout-stop-sec'] | default('2m') }}
+ExecStart=/bin/sh -c "while true; \
+          do etcdctl set --ttl '{{ service['acl-ttl'] | default('120') }}'  /yoda/global/acls/this-cluster/cidr/src \"$(fleetctl list-machines | awk '{print $2}' | tail -n  +2 | tr '\n' ' ')\"; \
+          sleep {{ service['poll-interval'] | default('60s') }}; done "
+
+[X-Fleet]
+Conflicts=cluster-acl-update@%i.service
