@@ -1,6 +1,7 @@
 {%- set service = service or {} -%}
 {%- set version = version or '1.0' %}
 {%- set name = name or 'cluster-acl-updater' %}
+{%- set docker_cidr = docker_cidr or '172.17.42.0/24' -%}
 
 [Unit]
 Description={{name}}-{{version}}-app@%i
@@ -12,7 +13,7 @@ RestartSec={{ service['restart-sec'] | default('20s') }}
 TimeoutStartSec={{ service['timeout-start-sec'] | default('20m') }}
 TimeoutStopSec={{ service['timeout-stop-sec'] | default('2m') }}
 ExecStart=/bin/sh -c "while true; \
-          do etcdctl set --ttl '{{ service['acl-ttl'] | default('120') }}'  /yoda/global/acls/this-cluster/cidr/src \"$(fleetctl list-machines | awk '{print $2}' | tail -n  +2 | tr '\n' ' ')\"; \
+          do etcdctl set --ttl '{{ service['acl-ttl'] | default('120') }}'  /yoda/global/acls/this-cluster/cidr/src \"{{ docker_cidr }}  $(fleetctl list-machines | awk '{print $2}' | tail -n  +2 | tr '\n' ' ')\"; \
           sleep {{ service['poll-interval'] | default('60s') }}; done "
 
 [X-Fleet]
