@@ -2,7 +2,7 @@
 {%- set service = service or {} -%}
 {%- set image = image or 'totem/totem-base:trusty' -%}
 {%- set container_name = container_name or name+'-'+version+'-app-%i'-%}
-{%- set hostname = hostname or container_name -%}
+{%- set hostname = hostname or (name | truncate(50, True, '')) +version+ '-%i' -%}
 {%- set environment = environment or {} -%}
 {%- set sidekicks = sidekicks or () -%}
 
