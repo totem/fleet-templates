@@ -1,0 +1,20 @@
+{%- set service = service or {} -%}
+{%- set version = version or '1.0' %}
+{%- set name = name or 'systemd-reload-hack' %}
+
+[Unit]
+Description=Systemd Reload hack (when unit dep. fails)
+Requires=fleet.service
+
+[Service]
+Restart={{ service['restart'] | default('always') }}
+RestartSec={{ service['restart-sec'] | default('20s') }}
+TimeoutStartSec={{ service['timeout-start-sec'] | default('1m') }}
+TimeoutStopSec={{ service['timeout-stop-sec'] | default('1m') }}
+ExecStart=/bin/sh -c "while true; do \
+          if systemctl -all list-units | grep -e '@.*not-found.*inactive.*dead.*'; then \
+             systemctl daemon-reload; \
+          fi; \
+          sleep 120s; done"
+[X-Fleet]
+Global=true
