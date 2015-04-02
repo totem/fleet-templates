@@ -5,6 +5,7 @@
 {%- set hostname = hostname or (name | truncate(40, True, '')) +version+ '-%i' -%}
 {%- set environment = environment or {} -%}
 {%- set sidekicks = sidekicks or () -%}
+{%- set is_global = is_global or False -%}
 
 {% block unit %}
 [Unit]
@@ -35,5 +36,10 @@ ExecStop=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && do
 
 {% block xfleet %}
 [X-Fleet]
+
+{% if is_global %}
+Global=true
+{% else %}
 Conflicts={{ name }}-{{ version }}-app@*.service
+{% endif %}
 {%- endblock -%}
