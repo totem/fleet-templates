@@ -1,5 +1,5 @@
 {%- set service = service or {} -%}
-{%- set etcd_log_base = /totem/logs -%}
+{%- set etcd_log_base = '/totem/logs' -%}
 
 [Unit]
 Description=Send Journalctl to central logger
