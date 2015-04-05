@@ -25,7 +25,7 @@ TimeoutStopSec={{ service['timeout-stop-sec'] | default('2m') }}
 ExecStartPre=/bin/bash -xc "/usr/bin/docker pull {{ image }}"
 ExecStartPre=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker stop {{ container_name }} && \
              sleep 10s && docker rm -f {{ container_name }} && sleep 10s || true"
-ExecStart=/bin/sh -xc "/usr/bin/docker run -h {{ hostname }} -v /dev/log {{ docker_args | replace('"', '\\"') }} -P  --rm  \
+ExecStart=/bin/sh -xc "/usr/bin/docker run -h {{ hostname }} -v /dev/log:/dev/log {{ docker_args | replace('"', '\\"') }} -P  --rm  \
           {% for env_name, env_value in environment.iteritems() %} -e {{ env_name }}='{{ env_value | replace('"', '\\"') }}'{% endfor %} \
           -e HOST_IP=$(hostname -i) \
           -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
