@@ -14,11 +14,11 @@ Description={{ name }}-{{ version }}-app@%i Application
 Wants={% for sidekick in sidekicks %}{{name+'-'+version+'-'+sidekick+'@%i.service '}}{% endfor %}
 After=docker.service
 Requires=docker.service
-SyslogIdentifier={{ log_identifier }}
 {%- endblock -%}
 
 {% block service %}
 [Service]
+SyslogIdentifier={{ log_identifier }}
 User=core
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
