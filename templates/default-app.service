@@ -2,10 +2,11 @@
 {%- set service = service or {} -%}
 {%- set image = image or 'totem/totem-base:trusty' -%}
 {%- set container_name = container_name or name+'-'+version+'-app-%i'-%}
-{%- set hostname = hostname or (name | truncate(40, True, '')) +version+ '-%i' -%}
+{%- set hostname = hostname or (name | truncate(40, True, '')) + '.app.' + version + '.%i.$(hostname)' -%}
 {%- set environment = environment or {} -%}
 {%- set sidekicks = sidekicks or () -%}
 {%- set is_global = is_global or False -%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.app.%i'-%}
 
 {% block unit %}
 [Unit]
@@ -13,6 +14,7 @@ Description={{ name }}-{{ version }}-app@%i Application
 Wants={% for sidekick in sidekicks %}{{name+'-'+version+'-'+sidekick+'@%i.service '}}{% endfor %}
 After=docker.service
 Requires=docker.service
+SyslogIdentifier={{ log_identifier }}
 {%- endblock -%}
 
 {% block service %}
@@ -30,6 +32,7 @@ ExecStart=/bin/sh -xc "/usr/bin/docker run -h {{ hostname }} -v /dev/log:/dev/lo
           -e HOST_IP=$(hostname -i) \
           -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
           -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
+          -e LOG_IDENTIFIER={{ log_identifier }}
           --name {{ container_name }} {{ image }} {{ command }}"
 ExecStop=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker rm -f {{ container_name }} || true"
 {%- endblock -%}
