@@ -2,7 +2,7 @@
 {%- set version = version or '1.0' %}
 {%- set name = name or 'systemd-journal-remote' %}
 {%- set etcd_log_base = '/totem/logs' -%}
-{%- set log_identifier = log_identifier or name+'.'+version+'.app.%i'-%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
 
 [Unit]
 Description=Send Journalctl to central logger

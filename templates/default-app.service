@@ -6,7 +6,7 @@
 {%- set environment = environment or {} -%}
 {%- set sidekicks = sidekicks or () -%}
 {%- set is_global = is_global or False -%}
-{%- set log_identifier = log_identifier or name+'.'+version+'.app.%i'-%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
 
 {% block unit %}
 [Unit]

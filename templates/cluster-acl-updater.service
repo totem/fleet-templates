@@ -2,7 +2,7 @@
 {%- set version = version or '1.0' %}
 {%- set name = name or 'cluster-acl-updater' %}
 {%- set docker_cidr = docker_cidr or '172.17.42.0/24' -%}
-{%- set log_identifier = log_identifier or name+'.'+version+'.app.%i'-%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
 
 [Unit]
 Description={{name}}-{{version}}-app@%i
