@@ -1,12 +1,14 @@
 {%- set service = service or {} -%}
 {%- set version = version or '1.0' %}
 {%- set name = name or 'systemd-reload-hack' %}
+{%- set log_identifier = log_identifier or name+'.'+version+'.app.%i'-%}
 
 [Unit]
 Description=Systemd Reload hack (when unit dep. fails)
 Requires=fleet.service
 
 [Service]
+SyslogIdentifier={{ log_identifier }}
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
 TimeoutStartSec={{ service['timeout-start-sec'] | default('1m') }}

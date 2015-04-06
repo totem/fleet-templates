@@ -1,10 +1,14 @@
 {%- set service = service or {} -%}
+{%- set version = version or '1.0' %}
+{%- set name = name or 'systemd-journal-remote' %}
 {%- set etcd_log_base = '/totem/logs' -%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.app.%i'-%}
 
 [Unit]
 Description=Send Journalctl to central logger
 
 [Service]
+SyslogIdentifier={{ log_identifier }}
 TimeoutStartSec=0
 ExecStart=/bin/sh -c "/usr/bin/journalctl -o json -f | /usr/bin/ncat \
           $(etcdctl get   {{etcd_log_base}}/host) $(etcdctl get {{etcd_log_base}}/port)"
