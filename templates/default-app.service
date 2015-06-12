@@ -7,6 +7,7 @@
 {%- set sidekicks = sidekicks or () -%}
 {%- set is_global = is_global or False -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
+{%- set machine_of = machine_of or '' %}
 
 {% block unit %}
 [Unit]
@@ -44,5 +45,9 @@ ExecStop=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && do
 Global=true
 {% else %}
 Conflicts={{ name }}-{{ version }}-app@*.service
+{% endif %}
+
+{% if machine_of %}
+MachineOf={{ machine_of }}
 {% endif %}
 {%- endblock -%}
