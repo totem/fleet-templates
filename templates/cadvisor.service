@@ -1,0 +1,14 @@
+[Unit]
+Description=Analyzes resource usage and performance characteristics of running containers.
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStartPre=/usr/bin/docker pull google/cadvisor:latest
+ExecStartPre=-/bin/bash -c "docker inspect cadvisor >/dev/null 2>&1 && docker rm -f cadvisor || true"
+ExecStart=/usr/bin/docker run --volume=/var/run:/var/run:rw --volume=/sys/fs/cgroup/:/sys/fs/cgroup:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=8080:8080 --name=cadvisor google/cadvisor:latest
+ExecStop=/usr/bin/docker rm -f cadvisor
+
+[X-Fleet]
+Global=true
