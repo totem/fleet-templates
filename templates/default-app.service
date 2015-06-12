@@ -8,13 +8,15 @@
 {%- set is_global = is_global or False -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
 {%- set machine_of = machine_of or '' %}
+{%- set after = after or '' %}
+{%- set requires = requires or '' %}
 
 {% block unit %}
 [Unit]
 Description={{ name }}-{{ version }}-app@%i Application
 Wants={% for sidekick in sidekicks %}{{name+'-'+version+'-'+sidekick+'@%i.service '}}{% endfor %}
-After=docker.service
-Requires=docker.service
+After=docker.service,{{ after }}
+Requires=docker.service,{{ requires }}
 {%- endblock -%}
 
 {% block service %}
