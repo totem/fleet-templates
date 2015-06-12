@@ -15,8 +15,8 @@
 [Unit]
 Description={{ name }}-{{ version }}-app@%i Application
 Wants={% for sidekick in sidekicks %}{{name+'-'+version+'-'+sidekick+'@%i.service '}}{% endfor %}
-After=docker.service,{{ after }}
-Requires=docker.service,{{ requires }}
+After=docker.service {{ after }}
+Requires=docker.service {{ requires }}
 {%- endblock -%}
 
 {% block service %}
