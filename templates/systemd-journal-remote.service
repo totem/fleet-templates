@@ -16,6 +16,5 @@ ExecStart=/bin/sh -c "/usr/bin/journalctl -o json -f | /usr/bin/ncat \
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
 
-[Install]
-WantedBy=multi-user.target
+[X-Fleet]
 Global=true
