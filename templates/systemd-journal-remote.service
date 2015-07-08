@@ -10,7 +10,7 @@ Description=Send Journalctl to central logger
 [Service]
 SyslogIdentifier={{ log_identifier }}
 TimeoutStartSec=0
-ExecStart=/bin/sh -c "/usr/bin/journalctl -o json -f | /usr/bin/ncat \
+ExecStart=/bin/sh -c "/usr/bin/journalctl -o short-iso -f | /usr/bin/ncat \
           $(etcdctl get   {{etcd_log_base}}/host) $(etcdctl get {{etcd_log_base}}/port)"
 
 Restart={{ service['restart'] | default('always') }}
