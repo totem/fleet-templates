@@ -2,7 +2,7 @@
 {%- set version = version or '1.0' -%}
 {%- set name = name or 'ssh-tunnel' -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
-{%- set tunnels = tunnels or {} -%}
+{%- set tunnels = tunnels or '' -%}
 {%- set target_host = target_host or '' -%}
 
 [Unit]
