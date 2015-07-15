@@ -1,0 +1,20 @@
+{%- set service = service or {} -%}
+{%- set version = version or '1.0' -%}
+{%- set name = name or 'ssh-tunnel' -%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
+{%- set tunnels = tunnels or {} -%}
+{%- set target_host = target_host or '' -%}
+
+[Unit]
+Description=Establishes portmapping using ssh tunnel
+
+[Service]
+SyslogIdentifier={{ log_identifier }}
+TimeoutStartSec=0
+ExecStart=/bin/sh -c "ssh -N -l core  -L {{ tunnels.join(' -L ') }} {{target_host}}"
+
+Restart={{ service['restart'] | default('always') }}
+RestartSec={{ service['restart-sec'] | default('20s') }}
+
+[X-Fleet]
+Global=true
