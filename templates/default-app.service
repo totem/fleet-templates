@@ -8,6 +8,7 @@
 {%- set is_global = is_global or False -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
 {%- set machine_of = machine_of or '' %}
+{%- set is_sticky = is_sticky or False -%}
 {%- set after = after or '' %}
 {%- set requires = requires or '' %}
 {% block unit %}
@@ -52,5 +53,7 @@ Conflicts={{ name }}-{{ version }}-app@*.service
 
 {% if machine_of %}
 MachineOf={{ machine_of }}
+{% elif  is_sticky %}
+MachineOf=sticky-%i-latest-app@1.service
 {% endif %}
 {%- endblock -%}
