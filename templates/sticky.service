@@ -1,0 +1,10 @@
+[Unit]
+Description=Provides sticky unit for machine: {{machine_id}}
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c "echo Sticky unit configured"
+
+[X-Fleet]
+MachineID={{machine_id}}
