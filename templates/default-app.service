@@ -11,7 +11,7 @@
 {%- set is_sticky = is_sticky or False -%}
 {%- set after = after or '' %}
 {%- set requires = requires or '' %}
-{%- set use_hostnetwork = False -%}
+{%- set use_hostnetwork = use_hostnetwork or False -%}
 {% block unit %}
 [Unit]
 Description={{ name }}-{{ version }}-app@%i Application
