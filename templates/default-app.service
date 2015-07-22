@@ -22,6 +22,7 @@ Requires=docker.service {{ requires }}
 
 {% block service %}
 [Service]
+EnvironmentFile=/etc/environment
 SyslogIdentifier={{ log_identifier }}
 User=core
 Restart={{ service['restart'] | default('always') }}
