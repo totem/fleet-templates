@@ -1,7 +1,10 @@
 {%- set version = version or '1.0' %}
 {%- set image = image or 'totem/yoda-discover' -%}
 {%- set container_name = name+'-'+version+'-'+service_type+'-%i' -%}
-{%- set command = command or 'discover.yoda_register --proxy-host=${COREOS_PRIVATE_IPV4} '+name +'-' +version+'-app-%i' -%}
+{%- set command = command or 'discover.yoda_register \
+        --docker-url=http://${COREOS_PRIVATE_IPV4}:4243 \
+        --etcd-host=${COREOS_PRIVATE_IPV4} \
+        --proxy-host=${COREOS_PRIVATE_IPV4} '+name +'-' +version+'-app-%i' -%}
 {%- set environment = environment or {} -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.yoda-register'-%}
 {%- extends "default-app.service" -%}
