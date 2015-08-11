@@ -24,6 +24,7 @@ Requires=docker.service {{ requires }}
 [Service]
 EnvironmentFile=/etc/environment
 SyslogIdentifier={{ log_identifier }}
+KillMode=none
 User=core
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
@@ -40,8 +41,8 @@ ExecStart=/bin/sh -c "/usr/bin/docker run {% if use_hostnetwork %}--net=host{% e
           -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
           -e LOG_IDENTIFIER={{ log_identifier }} \
           --name {{ container_name }} {{ image }} {{ command }}"
-ExecStop=-/usr/bin/docker kill --signal {{  service['container-stop-signal']  | default('SIGTERM') }} {{ container_name }}
 ExecStop=-/usr/bin/docker stop -t  {{  service['container-stop-sec']  | default('10') }} {{ container_name }}
+ExecStop=-/usr/bin/docker kill {{ container_name }}
 ExecStop=-/usr/bin/docker rm -f {{ container_name }}
 {%- endblock -%}
 
