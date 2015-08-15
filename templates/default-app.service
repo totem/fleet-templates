@@ -4,6 +4,7 @@
 {%- set container_name = container_name or name+'-'+version+'-app-%i'-%}
 {%- set hostname = hostname or (name | truncate(40, True, '')) +version+ '-%i' -%}
 {%- set environment = environment or {} -%}
+{%- set environment_raw = environment_raw or {} -%}
 {%- set sidekicks = sidekicks or () -%}
 {%- set is_global = is_global or False -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
@@ -36,6 +37,7 @@ ExecStartPre=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 &
 ExecStart=/bin/sh -c "/usr/bin/docker run {% if use_hostnetwork %}--net=host{% else %} -h {{ hostname }} {% endif %} \
           -v /dev/log:/dev/log {{ docker_args | replace('"', '\\"') }} -P  --rm  \
           {% for env_name, env_value in environment.iteritems() %} -e {{ env_name }}='{{ env_value | replace('"', '\\"') }}'{% endfor %} \
+          {% for env_name, env_value in environment_raw.iteritems() %} -e {{ env_name }}=\"{{ env_value }}\" {% endfor %} \
           -e HOST_IP=$(hostname -i) \
           -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
           -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
