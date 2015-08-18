@@ -36,7 +36,7 @@ ExecStartPre=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 &
              sleep 10s && docker rm -f {{ container_name }} && sleep 10s || true"
 ExecStart=/bin/sh -c "/usr/bin/docker run {% if use_hostnetwork %}--net=host{% else %} -h {{ hostname }} {% endif %} \
           -v /dev/log:/dev/log {{ docker_args | replace('"', '\\"') }} -P  --rm  \
-          {% for env_name, env_value in environment.iteritems() %} -e {{ env_name }}='{{ env_value | replace('"', '\\"') }}'{% endfor %} \
+          {% for env_name, env_value in environment.iteritems() %} -e {{ env_name }}=$'{{ env_value | replace('"', '\\"') | replace('\'', '\\\'') }}'{% endfor %} \
           {% for env_name, env_value in environment_raw.iteritems() %} -e {{ env_name }}=\"{{ env_value }}\" {% endfor %} \
           -e HOST_IP=$(hostname -i) \
           -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
