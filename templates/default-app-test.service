@@ -1,0 +1,65 @@
+{%- set version = version or '1.0' %}
+{%- set service = service or {} -%}
+{%- set image = image or 'totem/totem-base:trusty' -%}
+{%- set container_name = container_name or name+'-'+version+'-app-%i'-%}
+{%- set hostname = hostname or (name | truncate(40, True, '')) +version+ '-%i' -%}
+{%- set environment = environment or {} -%}
+{%- set environment_raw = environment_raw or {} -%}
+{%- set sidekicks = sidekicks or () -%}
+{%- set is_global = is_global or False -%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
+{%- set machine_of = machine_of or '' %}
+{%- set is_sticky = is_sticky or False -%}
+{%- set after = after or '' %}
+{%- set requires = requires or '' %}
+{%- set use_hostnetwork = use_hostnetwork or False -%}
+{% block unit %}
+[Unit]
+Description={{ name }}-{{ version }}-app@%i Application
+Wants={% for sidekick in sidekicks %}{{name+'-'+version+'-'+sidekick+'@%i.service '}}{% endfor %}
+After=docker.service {{ after }}
+Requires=docker.service {{ requires }}
+{%- endblock -%}
+
+{% block service %}
+[Service]
+EnvironmentFile=/etc/environment
+SyslogIdentifier={{ log_identifier }}
+KillMode=none
+User=core
+Restart={{ service['restart'] | default('always') }}
+RestartSec={{ service['restart-sec'] | default('20s') }}
+TimeoutStartSec={{ service['timeout-start-sec'] | default('0') }}
+TimeoutStopSec={{ service['timeout-stop-sec'] | default('0') }}
+ExecStartPre=-/usr/bin/flock /tmp/docker-pull.lock /usr/bin/timeout 15m /usr/bin/docker pull {{ image }}
+ExecStartPre=/bin/sh -xc "docker inspect {{ container_name }} 1>/dev/null 2>&1 && docker stop {{ container_name }} && \
+             sleep 10s && docker rm -f {{ container_name }} && sleep 10s || true"
+ExecStart=/bin/sh -c "/usr/bin/docker run {% if use_hostnetwork %}--net=host{% else %} -h {{ hostname }} {% endif %} \
+          -v /dev/log:/dev/log {{ docker_args | replace('"', '\\"') }} -P  --rm  \
+          {% for env_name, env_value in environment.iteritems() %} -e \"{{ env_name }}=$'\'{{ env_value | replace('"', '\\\\\\"') | replace('\'', '\\\'') }}\''\"{% endfor %} \
+          {% for env_name, env_value in environment_raw.iteritems() %} -e {{ env_name }}=\"{{ env_value }}\" {% endfor %} \
+          -e HOST_IP=$(hostname -i) \
+          -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
+          -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
+          -e LOG_IDENTIFIER={{ log_identifier }} \
+          --name {{ container_name }} {{ image }} {{ command }}"
+ExecStop=-/usr/bin/docker stop -t  {{  service['container-stop-sec']  | default('30') }} {{ container_name }}
+ExecStop=-/usr/bin/docker kill {{ container_name }}
+ExecStop=-/usr/bin/docker rm -f {{ container_name }}
+{%- endblock -%}
+
+{% block xfleet %}
+[X-Fleet]
+
+{% if is_global %}
+Global=true
+{% else %}
+Conflicts={{ name }}-{{ version }}-app@*.service
+{% endif %}
+
+{% if machine_of %}
+MachineOf={{ machine_of }}
+{% elif  is_sticky %}
+MachineOf=sticky-%i-latest-app@1.service
+{% endif %}
+{%- endblock -%}
