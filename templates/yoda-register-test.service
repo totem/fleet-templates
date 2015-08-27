@@ -1,5 +1,5 @@
 {%- set version = version or '1.0' %}
-{%- set image = image or 'totem/yoda-discover' -%}
+{%- set image = image or 'totem/yoda-discover:develop' -%}
 {%- set container_name = name+'-'+version+'-'+service_type+'-%i' -%}
 {%- set docker_args = docker_args or '-v /var/run/docker.sock:/var/run/docker.sock' -%}
 {%- set proxy_host = proxy_host or '${COREOS_PRIVATE_IPV4}' -%}
