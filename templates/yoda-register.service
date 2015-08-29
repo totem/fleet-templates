@@ -6,6 +6,8 @@
 {%- set command = command or 'discover.yoda_register \
         --docker-url=unix://var/run/docker.sock \
         --etcd-host=${COREOS_PRIVATE_IPV4} \
+        --service-name='+name+'-'+version+'-app@%i.service \
+        --node-num=%i \
         --proxy-host='+proxy_host+' '+name +'-' +version+'-app-%i' -%}
 {%- set environment = environment or {} -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.yoda-register'-%}
