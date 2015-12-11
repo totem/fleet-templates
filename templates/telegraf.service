@@ -15,7 +15,7 @@ ExecStartPre=/bin/bash -c "mkdir -f $INSTALL_DIR && wget -qO- http://get.influxd
 ExecStartPre=/bin/bash -c "\
 wget -qO-{{telegraf_conf_url}} | \
 sed \
-    {% for env_name,env_value in environment %}-e 's/\${{env_name}}/{{env_value  | replace('/', '\\/') | replace('"', '\\\\\\"') | replace('\'', '\\\\\'')}}}/g' {% endfor %} \
+    {% for env_name,env_value in environment.items() %}-e 's/\${{env_name}}/{{env_value  | replace('/', '\\/') | replace('"', '\\\\\\"') | replace('\'', '\\\\\'')}}}/g' {% endfor %} \
     > $INSTALL_DIR/telegraf.conf \
 "
 
