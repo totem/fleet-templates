@@ -12,7 +12,7 @@ Environment=INSTALL_DIR=/opt/telegraf
 Restart=always
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
-ExecStartPre=/bin/bash -c "mkdir -f $INSTALL_DIR && wget -qO- http://get.influxdb.org/telegraf/telegraf_linux_amd64_{{telegraf_version}}.tar.gz | tar -xz -C $INSTALL_DIR"
+ExecStartPre=/bin/bash -c "mkdir -p $INSTALL_DIR && wget -qO- http://get.influxdb.org/telegraf/telegraf_linux_amd64_{{telegraf_version}}.tar.gz | tar -xz -C $INSTALL_DIR"
 ExecStartPre=/bin/bash -c "\
 wget -qO- {{telegraf_conf_url}} | \
 sed \
