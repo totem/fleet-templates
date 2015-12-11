@@ -3,12 +3,14 @@
 {%- set environment = environment or {} %}
 {%- set service = service or {} %}
 {%- set install_dir = install_dir or '/opt/telegraf' %}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
 
 [Unit]
 Description=Installs, configures and starts telegraf agent on coreos cluster.
 After=docker.service
 
 [Service]
+SyslogIdentifier={{ log_identifier }}
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
 ExecStartPre=/bin/bash -xc "mkdir -p {{install_dir}} && wget -qO- http://get.influxdb.org/telegraf/telegraf_linux_amd64_{{telegraf_version}}.tar.gz | tar -xz -C {{install_dir}} "
