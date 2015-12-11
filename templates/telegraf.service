@@ -20,7 +20,7 @@ ExecStartPre=/bin/bash -c "\
 wget -qO-{{telegraf_conf_url}} | \
 sed \
     {% for env_name in environment %}-e \"s/\${{{env_name}}}/${{{env_name}}}/g\" {% endfor %} \
-    > $INSTALL_DIR/telegraf.conf
+    > $INSTALL_DIR/telegraf.conf \
 "
 
 ExecStart=$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf
