@@ -2,23 +2,23 @@
 {%- set telegraf_version = telegraf_version or '0.2.4' %}
 {%- set environment = environment or {} %}
 {%- set service = service or {} %}
+{%- set install_dir = install_dir or '/opt/telegraf' %}
 
 [Unit]
 Description=Installs, configures and starts telegraf agent on coreos cluster.
 After=docker.service
 
 [Service]
-Environment=INSTALL_DIR=/opt/telegraf
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
-ExecStartPre=/bin/bash -c "mkdir -p $INSTALL_DIR && wget -qO- http://get.influxdb.org/telegraf/telegraf_linux_amd64_{{telegraf_version}}.tar.gz | tar -xz -C $INSTALL_DIR"
-ExecStartPre=/bin/bash -c "wget -qO- {{telegraf_conf_url}} | \
+ExecStartPre=/bin/bash -xc "mkdir -p {{install_dir}} && wget -qO- http://get.influxdb.org/telegraf/telegraf_linux_amd64_{{telegraf_version}}.tar.gz | tar -xz -C {{install_dir}} "
+ExecStartPre=/bin/bash -xc "wget -qO- {{telegraf_conf_url}} | \
 sed \
     {% for env_name,env_value in environment.items() %} -e 's/${{env_name}}/{{env_value  | replace('/', '\\\\/') | replace('"', '\\\\\\"') | replace('\'', '\\\\\'')}}/g' {% endfor %} \
-    > $INSTALL_DIR/telegraf.conf "
+    > {{install_dir}}/telegraf.conf "
 
-ExecStart=/bin/bash -c -x "$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf"
-ExecStop=/bin/bash -c "rm -rf $INSTALL_DIR"
+ExecStart=/bin/bash -c -x "{{install_dir}} /telegraf_linux_amd64 -config {{install_dir}} /telegraf.conf"
+ExecStop=/bin/bash -c "rm -rf {{install_dir}} "
 
 [X-Fleet]
 Global=true
