@@ -17,7 +17,7 @@ sed \
     {% for env_name,env_value in environment.items() %} -e 's/${{env_name}}/{{env_value  | replace('/', '\\\\/') | replace('"', '\\\\\\"') | replace('\'', '\\\\\'')}}/g' {% endfor %} \
     > $INSTALL_DIR/telegraf.conf "
 
-ExecStart=/bin/bash -c "$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf"
+ExecStart=/bin/bash -c -x "$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf"
 ExecStop=/bin/bash -c "rm -rf $INSTALL_DIR"
 
 [X-Fleet]
