@@ -2,7 +2,8 @@
 {%- set telegraf_version = telegraf_version or '0.2.4' }
 {%- set region = region or 'NA' }
 {%- set realm = realm or 'NA' }
-{%- set service = service or {} -%}
+{%- set service = service or {} %}
+{%- set environment = environment or {} %}
 
 [Unit]
 Description=Installs, configures and starts telegraf agent on coreos cluster.
@@ -10,17 +11,16 @@ After=docker.service
 
 [Service]
 Environment=INSTALL_DIR=/opt/telegraf
+{% for env_name, env_value in environment.items() %}Environment=${{ env_name }}={{ env_value }}{% endfor %} 
 Restart=always
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
 ExecStartPre=/bin/bash -c "mkdir -f $INSTALL_DIR && wget -qO- http://get.influxdb.org/telegraf/telegraf_linux_amd64_{{telegraf_version}}.tar.gz | tar -xz -C $INSTALL_DIR"
 ExecStartPre=/bin/bash -c "\
 wget -qO-{{telegraf_conf_url}} | \
-sed -e 's/\${region}/{{region | replace('/', '\\/') }}/g' \
-    -e 's/\${realm}/{{realm | replace('/', '\\/') }}/g' \
-    -e 's/\${influx_urls}/{{influx_urls | replace('/', '\\/') }}/g' \
-    -e 's/\${influx_username}/{{influx_username | replace('/', '\\/') }}/g' \
-    -e 's/\${influx_password}/{{influx_password | replace('/', '\\/') }}/g' > $INSTALL_DIR/telegraf.conf
+sed \
+    {% for env_name in environment %}-e \"s/\${{{env_name}}}/${{{env_name}}}/g\" {% endfor %} \
+    > $INSTALL_DIR/telegraf.conf
 "
 
 ExecStart=$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf
