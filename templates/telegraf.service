@@ -9,13 +9,12 @@ After=docker.service
 
 [Service]
 Environment=INSTALL_DIR=/opt/telegraf
-Restart=always
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
 ExecStartPre=/bin/bash -c "mkdir -p $INSTALL_DIR && wget -qO- http://get.influxdb.org/telegraf/telegraf_linux_amd64_{{telegraf_version}}.tar.gz | tar -xz -C $INSTALL_DIR"
 ExecStartPre=/bin/bash -c "wget -qO- {{telegraf_conf_url}} | \
 sed \
-    {% for env_name,env_value in environment.items() %} -e 's/\\${{env_name}}/{{env_value  | replace('/', '\\\\/') | replace('"', '\\\\\\"') | replace('\'', '\\\\\'')}}/g' {% endfor %} \
+    {% for env_name,env_value in environment.items() %} -e 's/${{env_name}}/{{env_value  | replace('/', '\\\\/') | replace('"', '\\\\\\"') | replace('\'', '\\\\\'')}}/g' {% endfor %} \
     > $INSTALL_DIR/telegraf.conf "
 
 ExecStart=/bin/bash -c "$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf"
