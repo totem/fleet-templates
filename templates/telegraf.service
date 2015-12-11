@@ -1,6 +1,7 @@
 {%- set telegraf_conf_url = telegraf_conf_url or 'https://raw.githubusercontent.com/totem/fleet-templates/master/extras/telegraf.service/telegraf.default.conf' %}
 {%- set telegraf_version = telegraf_version or '0.2.4' %}
 {%- set environment = environment or {} %}
+{%- set service = service or {} %}
 
 [Unit]
 Description=Installs, configures and starts telegraf agent on coreos cluster.
