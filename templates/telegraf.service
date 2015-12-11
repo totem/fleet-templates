@@ -20,8 +20,8 @@ sed \
     > $INSTALL_DIR/telegraf.conf \
 "
 
-ExecStart=$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf
-ExecStop=rm -rf $INSTALL_DIR
+ExecStart=/bin/bash -c "$INSTALL_DIR/telegraf_linux_amd64 -config $INSTALL_DIR/telegraf.conf"
+ExecStop=/bin/bash -c "rm -rf $INSTALL_DIR"
 
 [X-Fleet]
 Global=true
