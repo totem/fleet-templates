@@ -16,5 +16,5 @@ ReloadPropagatedFrom={{ name }}-{{ version }}-app@%i.service
 
 {% block xfleet %}
 [X-Fleet]
-Global=true
+MachineOf={{ name }}-{{ version }}-app@%i.service
 {%- endblock -%}
