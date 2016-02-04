@@ -2,7 +2,7 @@
 {%- set image = image or 'totem/yoda-discover' -%}
 {%- set container_name = name+'-'+version+'-'+service_type+'-%i' -%}
 {%- set command = command or 'discover.yoda_presence \
-        --node-name=' + container_name + ' ec2:meta-data:public-hostname  \
+        --node-name=$(cat /etc/machine-id) ec2:meta-data:public-hostname  \
         --etcd-host=${COREOS_PRIVATE_IPV4} ' -%}
 {%- set environment = environment or {} -%}
 {%- extends "default-app.service" -%}
