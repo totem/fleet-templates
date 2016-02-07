@@ -27,8 +27,11 @@ EnvironmentFile=/etc/environment
 SyslogIdentifier={{ log_identifier }}
 KillMode=none
 User=core
+{% if not service['schedule'] %}
 Restart={{ service['restart'] | default('always') }}
 RestartSec={{ service['restart-sec'] | default('20s') }}
+{% endif %}
+
 TimeoutStartSec={{ service['timeout-start-sec'] | default('0') }}
 TimeoutStopSec={{ service['timeout-stop-sec'] | default('0') }}
 ExecStartPre=-/usr/bin/flock /tmp/docker-pull.lock /usr/bin/timeout 15m /usr/bin/docker pull {{ image }}
