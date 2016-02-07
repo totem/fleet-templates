@@ -1,0 +1,33 @@
+{%- set version = version or '1.0' %}
+{%- set service = service or {} -%}
+{%- set is_global = is_global or False -%}
+{%- set machine_of = machine_of or '' %}
+{%- set is_sticky = is_sticky or False -%}
+{%- set after = after or '' %}
+{%- set requires = requires or '' %}
+{% block unit %}
+[Unit]
+Description={{ name }}-{{ version }}-app@%i Timer
+After=docker.service {{ after }}
+Requires=docker.service {{ requires }}
+{%- endblock -%}
+
+[Timer]
+OnCalendar={{ service['trigger'] || '17:00' }}
+Persistent=true
+
+{% block xfleet %}
+[X-Fleet]
+
+{% if is_global %}
+Global=true
+{% else %}
+Conflicts={{ name }}-{{ version }}-app@*.timer
+{% endif %}
+
+{% if machine_of %}
+MachineOf={{ machine_of }}
+{% elif  is_sticky %}
+MachineOf=sticky-%i-latest-app@1.service
+{% endif %}
+{%- endblock -%}
