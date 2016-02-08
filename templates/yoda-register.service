@@ -24,5 +24,10 @@ After=docker.service
 
 {% block xfleet %}
 [X-Fleet]
+{% if is_global %}
+Global=true
+{% else %}
 MachineOf={{ name }}-{{ version }}-app@%i.service
+{% endif %}
 {%- endblock -%}
+
