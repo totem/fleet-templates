@@ -13,7 +13,7 @@ Requires=docker.service {{ requires }}
 {%- endblock -%}
 
 [Timer]
-OnCalendar={{ service['trigger'] || '17:00' }}
+OnCalendar={{ service['trigger'] or  '17:00' }}
 Persistent=true
 
 {% block xfleet %}
