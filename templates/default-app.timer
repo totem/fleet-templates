@@ -5,18 +5,16 @@
 {%- set is_sticky = is_sticky or False -%}
 {%- set after = after or '' %}
 {%- set requires = requires or '' %}
-{% block unit %}
+
 [Unit]
 Description={{ name }}-{{ version }}-app@%i Timer
 After=docker.service {{ after }}
 Requires=docker.service {{ requires }}
-{%- endblock -%}
 
 [Timer]
 OnCalendar={{ service['trigger'] or  '17:00' }}
 Persistent=true
 
-{% block xfleet %}
 [X-Fleet]
 
 {% if is_global %}
@@ -30,4 +28,3 @@ MachineOf={{ machine_of }}
 {% elif  is_sticky %}
 MachineOf=sticky-%i-latest-app@1.service
 {% endif %}
-{%- endblock -%}
