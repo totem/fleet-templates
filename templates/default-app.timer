@@ -12,7 +12,7 @@ After=docker.service {{ after }}
 Requires=docker.service {{ requires }}
 
 [Timer]
-OnCalendar={{ service['trigger'] or  '17:00' }}
+OnCalendar={{ service['schedule'] or  '17:00' }}
 Persistent=true
 
 [X-Fleet]
