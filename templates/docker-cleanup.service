@@ -20,7 +20,7 @@ KillMode=none
 User=core
 TimeoutStartSec={{ service['timeout-start-sec'] | default('0') }}
 TimeoutStopSec={{ service['timeout-stop-sec'] | default('0') }}
-ExecStart=/bin/sh -c "(docker images | grep 'weeks ago1' | awk '{print $3}' | xargs docker rmi) \
+ExecStart=/bin/sh -c "(docker images | grep 'weeks ago' | awk '{print $3}' | xargs docker rmi) \
                       || echo 'Cleanup finished (not all images cleaned)...' "
 {%- endblock -%}
 
