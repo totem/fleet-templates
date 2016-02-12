@@ -41,7 +41,7 @@ ExecStart=/bin/sh -c "/usr/bin/docker run {% if use_hostnetwork %}--net=host{% e
  -v /dev/log:/dev/log {{ docker_args | replace('"', '\\"') }} -P  --rm  \
  {% for env_name, env_value in environment.iteritems() %} -e $'{{ env_name }}={{ env_value | replace('"', '\\\\\\"') | replace('\'', '\\\\\'') }}' {% endfor %} \
  {% for env_name, env_value in environment_raw.iteritems() %} -e {{ env_name }}=\"{{ env_value }}\" {% endfor %} \
- -e HOST_IP=$(hostname -i) \
+ -e HOST_IP=$(hostname -i || curl http://169.254.169.254/latest/meta-data/local-ipv4) \
  -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
  -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
  -e LOG_IDENTIFIER={{ log_identifier }} \
