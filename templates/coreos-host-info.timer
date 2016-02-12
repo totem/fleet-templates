@@ -1,0 +1,9 @@
+{%- set version = version or '1.0' %}
+{%- set service = service or {} -%}
+{%- set is_global = is_global or False -%}
+{%- set machine_of = machine_of or '' %}
+{%- set is_sticky = is_sticky or False -%}
+{%- set after = after or '' %}
+{%- set requires = requires or '' %}
+{%- set service['schedule'] = service['schedule'] or '*:0/15' %} 
+{%- extends "default-app.timer" -%}
