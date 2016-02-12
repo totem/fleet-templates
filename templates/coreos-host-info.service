@@ -1,0 +1,26 @@
+
+{%- set service = service or {} -%}
+{%- set version = version or 'v1' %}
+{%- set name = name or 'coreos-host-info' %}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
+
+[Unit]
+Description={{name}}-{{version}}-app@%i
+
+[Service]
+SyslogIdentifier={{ log_identifier }}
+TimeoutStartSec={{ service['timeout-start-sec'] | default('20m') }}
+TimeoutStopSec={{ service['timeout-stop-sec'] | default('2m') }}
+ExecStart=/bin/sh -c "\
+MACHINE_ID=\"$(cat /etc/machine-id)\" \
+TTL=3600 \
+ETCD_SET="etcdctl set --ttl=$TTL \
+$ETCD_SET totem/machines/$MACHINE_ID/stats/units/failed \"$(systemctl list-units | grep failed | wc -l)\" \
+$ETCD_SET totem/machines/$MACHINE_ID/stats/units/running \"$(systemctl list-units | grep running | wc -l)\" \
+$ETCD_SET totem/machines/$MACHINE_ID/hostname \"$(hostname -i)\" \
+$ETCD_SET totem/machines/$MACHINE_ID/hostname \"$(hostname -f)\" \
+$ETCD_SET totem/machines/$MACHINE_ID/ip \"$(hostname -i)\" \
+$ETCD_SET totem/machines/$MACHINE_ID/update/status \"$(update_engine_client -status  | grep CURRENT_OP | awk -F= '{print $2}')\""
+
+[X-Fleet]
+Global=true
