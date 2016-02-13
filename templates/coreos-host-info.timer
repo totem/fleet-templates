@@ -5,5 +5,4 @@
 {%- set is_sticky = is_sticky or False -%}
 {%- set after = after or '' %}
 {%- set requires = requires or '' %}
-{%- set service['schedule'] = service['schedule'] or '*:0/15' %} 
 {%- extends "default-app.timer" -%}
