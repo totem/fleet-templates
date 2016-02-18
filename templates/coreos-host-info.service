@@ -17,9 +17,8 @@ TTL=3600 && \
 ETCD_SET=\"etcdctl set --ttl=$TTL\" && \
 $ETCD_SET totem/machines/$MACHINE_ID/stats/units/failed \"$(systemctl list-units | grep failed | wc -l)\" && \
 $ETCD_SET totem/machines/$MACHINE_ID/stats/units/running \"$(systemctl list-units | grep running | wc -l)\" && \
-$ETCD_SET totem/machines/$MACHINE_ID/hostname \"$(hostname -i)\" && \
 $ETCD_SET totem/machines/$MACHINE_ID/hostname \"$(hostname -f)\" && \
-$ETCD_SET totem/machines/$MACHINE_ID/ip \"$(hostname -i)\" && \
+$ETCD_SET totem/machines/$MACHINE_ID/ip $(hostname -i) && \
 $ETCD_SET totem/machines/$MACHINE_ID/update/status \"$(update_engine_client -status  | grep CURRENT_OP | awk -F= '{print $2}')\""
 
 [X-Fleet]
