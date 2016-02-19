@@ -44,6 +44,7 @@ ExecStart=/bin/sh -c "/usr/bin/docker run {% if use_hostnetwork %}--net=host{% e
  -e HOST_IP=$(hostname -i 2>/dev/null || curl http://169.254.169.254/latest/meta-data/local-ipv4) \
  -e DISCOVER_APP_NAME={{ name }} -e DISCOVER_APP_VERSION={{ version }} \
  -e DISCOVER_NODE_NAME={{ container_name }} -e DISCOVER_NODE_NUMBER=%i \
+ -e MACHINE_ID=\"$(cat /etc/machine-id)\" \
  -e LOG_IDENTIFIER={{ log_identifier }} \
  --name {{ container_name }} {{ image }} {{ command }}"
 ExecStop=-/usr/bin/docker stop -t  {{  service['container-stop-sec']  | default('30') }} {{ container_name }}
