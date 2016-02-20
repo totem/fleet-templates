@@ -47,7 +47,7 @@ ExecStart=/bin/sh -c "/usr/bin/docker run {% if use_hostnetwork %}--net=host{% e
  -e MACHINE_ID=\"$(cat /etc/machine-id)\" \
  -e LOG_IDENTIFIER={{ log_identifier }} \
  --name {{ container_name }} {{ image }} {{ command }}"
-ExecStop=-/usr/bin/docker stop -t  {{  service['container-stop-sec']  | default('30') }} {{ container_name }}
+ExecStop=-/usr/bin/docker stop -t  {{  service['container-stop-sec']  | default('30') }} {{ container_name }} 2>/dev/null 
 ExecStop=-/bin/sh -c "/usr/bin/docker inspect {{ container_name }} 1>/dev/null 2>&1 && /usr/bin/docker rm -f {{ container_name }}"
 {%- endblock -%}
 
