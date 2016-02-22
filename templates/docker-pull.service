@@ -1,0 +1,31 @@
+{%- set version = version or '1.0' %}
+{%- set service = service or {} -%}
+{%- set sidekicks = sidekicks or () -%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
+{%- set after = after or '' %}
+{%- set requires = requires or '' %}
+{%- set use_hostnetwork = use_hostnetwork or False -%}
+{% block unit %}
+[Unit]
+Description={{ name }}-{{ version }}-app@%i Application
+After=docker.service {{ after }}
+Requires=docker.service {{ requires }}
+{%- endblock -%}
+
+{% block service %}
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=/etc/environment
+SyslogIdentifier={{ log_identifier }}
+KillMode=none
+User=core
+TimeoutStartSec={{ service['timeout-start-sec'] | default('0') }}
+TimeoutStopSec={{ service['timeout-stop-sec'] | default('0') }}
+ExecStart=/bin/sh -c "(etcdctl get /totem/docker/pull-list || echo 'totem/yoda-proxy:latest') | xargs -n 1 docker pull) "
+{%- endblock -%}
+
+{% block xfleet %}
+[X-Fleet]
+Global=true
+{%- endblock -%}
