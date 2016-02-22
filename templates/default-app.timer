@@ -20,11 +20,5 @@ Persistent=true
 {% if is_global %}
 Global=true
 {% else %}
-Conflicts={{ name }}-{{ version }}-app@*.timer
-{% endif %}
-
-{% if machine_of %}
-MachineOf={{ machine_of }}
-{% elif  is_sticky %}
-MachineOf=sticky-%i-latest-app@1.service
+MachineOf={{ name }}-{{ version }}-app@%i.service
 {% endif %}
