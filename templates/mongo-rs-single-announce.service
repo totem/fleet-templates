@@ -16,7 +16,7 @@ SyslogIdentifier={{ log_identifier }}
 KillMode=none
 User=core
 Type=oneshot
-RemainAfterExit=yes
+RemainAfterExit=no
 ExecStartPre=/bin/sh -xc "until docker inspect {{ container_name }} 1>/dev/null 2>&1; do \
     echo 'Waiting for container {{ container_name }}' \
     && sleep 10s; \
