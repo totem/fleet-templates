@@ -1,0 +1,30 @@
+{%- set version = version or '1.0' %}
+{%- set service = service or {} -%}
+{%- set container_name = container_name or name+'-'+version+'-app-%i'-%}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
+
+[Unit]
+Description=Register mongo-rs-single with etcd
+BindsTo={{ name }}-{{ version }}-app@%i.service
+ReloadPropagatedFrom={{ name }}-{{ version }}-app@%i.service
+After=docker.service
+Requires=docker.service
+
+[Service]
+EnvironmentFile=/etc/environment
+SyslogIdentifier={{ log_identifier }}
+KillMode=none
+User=core
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sh -xc "until docker inspect {{ container_name }} 1>/dev/null 2>&1; do \
+    echo 'Waiting for container {{ container_name }}' \
+    && sleep 10s \
+  done"
+ExecStart=/bin/sh -xc "etcdctl set /totem/mongo/nodes/primary \
+  \"$(hostname -i 2>/dev/null | tr -d '[[:space:]]'):$(\docker port  {{ container_name }} 27017 | awk -F':' '{print $2}')\""
+{%- endblock -%}
+
+[X-Fleet]
+MachineOf={{ name }}-{{ version }}-app@%i.service
+
