@@ -1,0 +1,21 @@
+
+{%- set service = service or {} -%}
+{%- set version = version or 'v1' %}
+{%- set name = name or 'yoda-cleanup' %}
+{%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
+
+[Unit]
+Description={{name}}-{{version}}-app@%i
+
+[Service]
+SyslogIdentifier={{ log_identifier }}
+TimeoutStartSec={{ service['timeout-start-sec'] | default('20m') }}
+TimeoutStopSec={{ service['timeout-stop-sec'] | default('2m') }}
+ExecStart=/bin/sh -c "\
+echo 'Begin location cleanup...' && \
+( etcdctl ls --recursive  /yoda/hosts   | grep upstream | xargs -I '{}'  /bin/bash -c 'etcdctl ls /yoda/upstreams/$(etcdctl get {}) ||  (test $? -eq 4  &&   etcdctl  rm --recursive  $(dirname {}))') && \
+
+echo 'Begin host cleanup...' && \
+(etcdctl ls --recursive  /yoda/hosts | grep locations$ | xargs -I '{}'  /bin/bash -c ' test $(etcdctl  ls {} | wc -l) -ne  0  ||  etcdctl rm --recursive $(dirname {})')
+[X-Fleet]
+Conflicts={{ name }}-{{ version }}-app@*.service
