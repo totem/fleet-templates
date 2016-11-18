@@ -7,6 +7,7 @@
 {%- set environment_raw = environment_raw or {} -%}
 {%- set sidekicks = sidekicks or () -%}
 {%- set is_global = is_global or False -%}
+{%- set is_multinode = is_multinode or False -%}
 {%- set log_identifier = log_identifier or name+'.'+version+'.%i.app'-%}
 {%- set machine_of = machine_of or '' %}
 {%- set is_sticky = is_sticky or False -%}
@@ -56,7 +57,7 @@ ExecStop=-/bin/sh -c "/usr/bin/docker inspect {{ container_name }} 1>/dev/null 2
 
 {% if is_global %}
 Global=true
-{% else %}
+{% elif not is_multinode %}
 Conflicts={{ name }}-{{ version }}-app@*.service
 {% endif %}
 
