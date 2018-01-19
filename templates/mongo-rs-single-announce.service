@@ -22,7 +22,7 @@ ExecStartPre=/bin/sh -xc "until docker inspect {{ container_name }} 1>/dev/null 
     && sleep 10s; \
   done"
 ExecStart=/bin/sh -xc "etcdctl set /totem/mongo/nodes/primary \
-  \"$(hostname -i 2>/dev/null | tr -d '[[:space:]]'):$(\docker port  {{ container_name }} 27017 | awk -F':' '{print $2}')\""
+  \"$(curl http://169.254.169.254/latest/meta-data/local-ipv4 | tr -d '[[:space:]]'):$(\docker port  {{ container_name }} 27017 | awk -F':' '{print $2}')\""
 
 [X-Fleet]
 MachineOf={{ name }}-{{ version }}-app@%i.service
